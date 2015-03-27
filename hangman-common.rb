@@ -64,7 +64,7 @@ def get_words_tree(words, alphabet)
   tree = words.group_by{ |w| get_letter_positions(letter, w) }
 
   tree.each do |pos, wds|
-    tree[pos] = (wds != words) ? get_words_tree(wds, alphabet.dup) : { words:words }
+    tree[pos] = get_words_tree(wds, alphabet.dup)
   end
 
   { letter:letter, tree:tree }
