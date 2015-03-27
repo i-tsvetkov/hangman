@@ -117,3 +117,14 @@ def get_best_letter(pattern, guesses = [])
   get_most_frequent_letter(alphabet, words)
 end
 
+def rank_words(words_tree, rank = 0)
+  return [{ words:words_tree[:words], rank:rank }] if words_tree.key?(:words)
+
+  ranks = []
+  words_tree[:tree].each do |pos, wds|
+    ranks += (pos == []) ? rank_words(wds, rank + 1) : rank_words(wds, rank)
+  end
+
+  ranks
+end
+
