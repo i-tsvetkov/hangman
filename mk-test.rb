@@ -1,3 +1,4 @@
+# encoding: utf-8
 NUM_OF_WORDS = 100
 
 words = File.read("./words.txt").lines.map{ |w| w.strip.downcase.tr('А-Я', 'а-я') }.uniq
