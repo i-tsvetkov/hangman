@@ -94,11 +94,19 @@ def fast_solve(word, tree = nil)
 end
 
 def load_words
+  if File.exist?("./words_cache.rb")
+    $words = eval(File.read("./words_cache.rb"))
+    return
+  end
   words = File.open('./words.txt').lines.map{ |w| w.strip.downcase.tr('А-Я', 'а-я') }.uniq
   $words = words.group_by{ |w| w.size }
 end
 
 def load_words_tree
+  if File.exist?("./words_tree_cache.rb")
+    $words = eval(File.read("./words_tree_cache.rb"))
+    return
+  end
   load_words()
   alphabet = ('а' .. 'я').to_a
   $words.each do |len, wds|
