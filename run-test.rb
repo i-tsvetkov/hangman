@@ -1,6 +1,18 @@
 require 'benchmark'
 require './hangman-common.rb'
 
+class FakeStdOut
+  def write(s)
+  end
+end
+
+def silent_block(&block)
+  orig_stdout, $stdout = $stdout, FakeStdOut.new
+  yield
+  $stdout = orig_stdout
+  nil
+end
+
 def red(s)
   "\e[1;31m" + s + "\e[m"
 end
@@ -16,8 +28,10 @@ load_words
 
 test_ok = true
 real_time = Benchmark.realtime do
-              test_words.each do |w|
-                test_ok &&= solve(w)[:words][0] == w
+              silent_block do
+                test_words.each do |w|
+                  test_ok &&= solve(w)[:words][0] == w
+                end
               end
             end
 puts "time:\s#{real_time}"
@@ -29,8 +43,10 @@ load_words_tree
 
 test_ok = true
 real_time = Benchmark.realtime do
-              test_words.each do |w|
-                test_ok &&= fast_solve(w)[:words][0] == w
+              silent_block do
+                test_words.each do |w|
+                  test_ok &&= fast_solve(w)[:words][0] == w
+                end
               end
             end
 puts "time:\s#{real_time}"
