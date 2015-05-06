@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 def get_letter_frequency(alphabet, words)
+  return [] if words.empty?
   alphabet.map do |letter|
     { letter:    letter,
       frequency: words.select{ |w| w.include?(letter) }.size.to_r / words.size
@@ -134,5 +135,41 @@ def rank_words(words_tree, rank = 0)
   end
 
   ranks
+end
+
+def statistical_solve(word, guesses = [], misses = [])
+  pattern  = '_' * word.size
+  words    = $words[word.size].dup
+  alphabet = ('а' .. 'я').to_a - guesses - misses
+
+  (guesses - misses).each do |letter|
+    words.select!{ |w| w.include?(letter) }
+    pattern = get_pattern(letter, word, pattern)
+  end
+
+  misses.each do |letter|
+    words.reject!{ |w| w.include?(letter) }
+  end
+
+  loop do
+    best_letter = get_most_frequent_letter(alphabet, words)
+    break if best_letter.nil?
+
+    if word.include?(best_letter)
+      words.select!{ |w| w.include?(best_letter) }
+      pattern = get_pattern(best_letter, word, pattern)
+    else
+      words.reject!{ |w| w.include?(best_letter) }
+    end
+
+    guesses.push(best_letter)
+    alphabet.delete(best_letter)
+
+    puts "#{best_letter}\s=>\s#{pattern}"
+
+    break unless pattern.include?('_')
+  end
+
+  return { pattern:pattern, guesses:guesses }
 end
 
