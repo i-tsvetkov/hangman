@@ -1,0 +1,30 @@
+digraph {
+	{ n1 [label="а"] } -> { n2 [label="а"] };
+	{ n2 [label="а"] } -> { а };
+	{ n1 [label="а"] } -> { n3 [label="_"] };
+	{ n3 [label="_"] } -> { n4 [label="в"] };
+	{ n4 [label="в"] } -> { n5 [label="в"] };
+	{ n5 [label="в"] } -> { в };
+	{ n4 [label="в"] } -> { n6 [label="_"] };
+	{ n6 [label="_"] } -> { n7 [label="е"] };
+	{ n7 [label="е"] } -> { n8 [label="е"] };
+	{ n8 [label="е"] } -> { е };
+	{ n7 [label="е"] } -> { n9 [label="_"] };
+	{ n9 [label="_"] } -> { n10 [label="и"] };
+	{ n10 [label="и"] } -> { n11 [label="и"] };
+	{ n11 [label="и"] } -> { и };
+	{ n10 [label="и"] } -> { n12 [label="_"] };
+	{ n12 [label="_"] } -> { n13 [label="о"] };
+	{ n13 [label="о"] } -> { n14 [label="о"] };
+	{ n14 [label="о"] } -> { о };
+	{ n13 [label="о"] } -> { n15 [label="_"] };
+	{ n15 [label="_"] } -> { n16 [label="с"] };
+	{ n16 [label="с"] } -> { n17 [label="с"] };
+	{ n17 [label="с"] } -> { с };
+	{ n16 [label="с"] } -> { n18 [label="_"] };
+	{ n18 [label="_"] } -> { n19 [label="у"] };
+	{ n19 [label="у"] } -> { n20 [label="у"] };
+	{ n20 [label="у"] } -> { у };
+	{ n19 [label="у"] } -> { n21 [label="_"] };
+	{ n21 [label="_"] } -> { я };
+}
