@@ -10,7 +10,7 @@ end
 @ctr = get_counter
 
 def mknode(label)
-  "{n#{@ctr.call}[label=\"#{label}\"]}"
+  "{\sn#{@ctr.call}\s[label=\"#{label}\"]\s}"
 end
 
 def mkpattern(ps, let, len)
@@ -40,5 +40,9 @@ def get_graph(tree, wsize, pnode = nil)
   end
 
   return graph
+end
+
+def make_graph(tree, wsize)
+  "digraph\s{\n\t#{get_graph(tree, wsize).join("\n\t")}\n}"
 end
 
