@@ -21,7 +21,7 @@ def get_pattern(letter, word, old_pattern)
 end
 
 def get_letter_positions(letter, word)
-  word.chars.with_index.map{ |c, i| c == letter ? i : nil }.compact
+  word.chars.each_with_index.map{ |c, i| c == letter ? i : nil }.compact
 end
 
 def solve(word, words = nil)
@@ -99,7 +99,7 @@ def load_words
     $words = eval(File.read("./words_cache.rb"))
     return
   end
-  words = File.open('./words.txt').lines.map{ |w| w.strip.downcase.tr('А-Я', 'а-я') }.uniq
+  words = File.open('./words.txt').each_line.map{ |w| w.strip.downcase.tr('А-Я', 'а-я') }.uniq
   $words = words.group_by{ |w| w.size }
 end
 
