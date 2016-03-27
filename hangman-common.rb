@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'sqlite3'
 
 def get_letter_frequency(alphabet, words)
   return [] if words.empty?
@@ -199,5 +200,29 @@ def write_sql_file(filename)
     file.write(get_sql_commands(pairs))
   end
   file.close
+end
+
+def db_solve(word)
+  db = SQLite3::Database.new('hangman.db')
+  path = "/#{word.size}"
+
+  pattern = '_' * word.size
+  guesses = []
+
+  loop do
+    result = db.execute("SELECT DATA FROM HANGMAN WHERE PATH = '#{path}'")
+    return { guesses: guesses, words: [] } if result.empty?
+
+    result = eval(result.first.first) # JSON is better but eval is evil
+
+    return { guesses: guesses, words: [result[:word]] } if result.key?(:word)
+
+    letter = result[:letter]
+    guesses.push(letter)
+    path.concat("/#{letter}/#{get_letter_positions(letter, word)}")
+
+    pattern = get_pattern(letter, word, pattern)
+    puts "#{letter}\s=>\s#{pattern}"
+  end
 end
 
