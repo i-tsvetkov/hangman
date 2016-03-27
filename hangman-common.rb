@@ -100,7 +100,7 @@ def load_words
     return
   end
   words = File.open('./words.txt').each_line.map{ |w| w.strip.downcase.tr('А-Я', 'а-я') }.uniq
-  $words = words.group_by{ |w| w.size }
+  $words = words.group_by(&:size)
 end
 
 def load_words_tree
@@ -171,5 +171,33 @@ def statistical_solve(word, guesses = [], misses = [])
   end
 
   return { pattern:pattern, guesses:guesses }
+end
+
+def tree_to_key_value_pairs(tree, path)
+  return [[path, { word: tree[:words].first }]] if tree.key?(:words)
+  pairs = [[path, { letter: tree[:letter] }]]
+  tree[:tree].each do |k, v|
+    new_path = [path, tree[:letter], k].map(&:to_s).join('/')
+    pairs += tree_to_key_value_pairs(v, new_path)
+  end
+  return pairs
+end
+
+def get_sql_commands(pairs)
+  pairs.map do |k, v|
+    "INSERT INTO HANGMAN VALUES ('#{k}', '#{v}');"
+  end.join("\n").concat("\n\n")
+end
+
+def write_sql_file(filename)
+  load_words
+  alphabet = ('а' .. 'я').to_a
+  file = open(filename, 'a')
+  $words.each do |size, words|
+    tree  = get_words_tree(words, alphabet.dup)
+    pairs = tree_to_key_value_pairs(tree, "/#{size}")
+    file.write(get_sql_commands(pairs))
+  end
+  file.close
 end
 
