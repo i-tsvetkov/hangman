@@ -17,19 +17,21 @@ def get_most_frequent_letter(alphabet, words)
 end
 
 def get_pattern(letter, word, old_pattern)
-  new_pattern = word.chars.map{ |c| c == letter ? letter : '_' }.join
-  new_pattern.chars.zip(old_pattern.chars).map{ |np, op| op == '_' ? np : op }.join
+  word.chars.zip(old_pattern.chars).map { |wch, pch|
+    wch == letter ? wch : pch
+  }.join
 end
 
 def get_letter_positions(letter, word)
-  word.chars.each_with_index.map{ |c, i| c == letter ? i : nil }.compact
+  word.size.times.select{ |i| word[i] == letter }
 end
 
 def solve(word, words = nil)
   guesses  = []
   pattern  = '_' * word.size
   alphabet = ('а' .. 'я').to_a
-  words    = words || $words[word.size].dup
+  words    = words || $words[word.size]
+  words = words.dup
 
   return { guesses:[], words:[] } if words.nil?
 
@@ -56,17 +58,18 @@ def solve(word, words = nil)
 
 end
 
-def get_words_tree(words, alphabet)
+def get_words_tree(words, alphabet = ('а' .. 'я').to_a)
   return { words:words } if alphabet.empty?
   return { words:words } if words.size == 1
 
+  alphabet = alphabet.dup
   letter = get_most_frequent_letter(alphabet, words)
   alphabet.delete(letter)
 
   tree = words.group_by{ |w| get_letter_positions(letter, w) }
 
   tree.each do |pos, wds|
-    tree[pos] = get_words_tree(wds, alphabet.dup)
+    tree[pos] = get_words_tree(wds, alphabet)
   end
 
   { letter:letter, tree:tree }
@@ -74,7 +77,7 @@ end
 
 def find_word_in_tree(word, tree, letters = [])
   return { letters:letters, words: tree[:words] } if tree.key?(:words)
-  return { letters:letters, words:[] } if not tree.key?(:tree)
+  return { letters:letters, words:[] } unless tree.key?(:tree)
 
   letters.push(tree[:letter])
   pos = get_letter_positions(tree[:letter], word)
@@ -110,14 +113,13 @@ def load_words_tree
     return
   end
   load_words()
-  alphabet = ('а' .. 'я').to_a
   $words.each do |len, wds|
-    $words[len] = get_words_tree(wds, alphabet)
+    $words[len] = get_words_tree(wds)
   end
 end
 
 def get_best_letter(pattern, guesses = [])
-  return nil if not pattern.include?('_')
+  return nil unless pattern.include?('_')
   words = $words[pattern.size].dup
   guesses += pattern.chars.select{ |c| c != '_' }
   char_group = guesses.empty? ? '.' : '[^' + guesses.join + ']'
@@ -192,10 +194,9 @@ end
 
 def write_sql_file(filename)
   load_words
-  alphabet = ('а' .. 'я').to_a
   file = open(filename, 'a')
   $words.each do |size, words|
-    tree  = get_words_tree(words, alphabet.dup)
+    tree  = get_words_tree(words)
     pairs = tree_to_key_value_pairs(tree, "/#{size}")
     file.write(get_sql_commands(pairs))
   end
