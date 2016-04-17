@@ -186,6 +186,24 @@ def tree_to_key_value_pairs(tree, path)
   return pairs
 end
 
+def words_to_key_value_pairs(words, path, alphabet = ('а' .. 'я').to_a)
+  return [[path, { word: words.first }]] if words.size == 1
+
+  letter = get_most_frequent_letter(alphabet, words)
+  alphabet.delete(letter)
+
+  pairs = [[path, { letter: letter }]]
+
+  word_sets = words.group_by{ |w| get_letter_positions(letter, w) }
+
+  word_sets.each do |pos, wds|
+    new_path = [path, letter, pos].map(&:to_s).join('/')
+    pairs += words_to_key_value_pairs(wds, new_path, alphabet.dup)
+  end
+
+  return pairs
+end
+
 def get_sql_commands(pairs)
   pairs.map do |k, v|
     "INSERT INTO HANGMAN VALUES ('#{k}', '#{v}');"
