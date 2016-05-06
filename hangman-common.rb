@@ -5,7 +5,7 @@ def get_letter_frequency(alphabet, words)
   return [] if words.empty?
   alphabet.map do |letter|
     { letter:    letter,
-      frequency: words.select{ |w| w.include?(letter) }.size.to_r / words.size
+      frequency: words.count{ |w| w.include?(letter) }.quo(words.size)
     }
   end
 end
@@ -121,7 +121,7 @@ end
 def get_best_letter(pattern, guesses = [])
   return nil unless pattern.include?('_')
   words = $words[pattern.size].dup
-  guesses += pattern.chars.select{ |c| c != '_' }
+  guesses.concat pattern.chars.select{ |c| c != '_' }
   char_group = guesses.empty? ? '.' : '[^' + guesses.join + ']'
   regex = Regexp.new(pattern.gsub('_', char_group))
   words.select!{ |w| w.match(regex) }
@@ -134,7 +134,7 @@ def rank_words(words_tree, rank = 0)
 
   ranks = []
   words_tree[:tree].each do |pos, wds|
-    ranks += (pos == []) ? rank_words(wds, rank + 1) : rank_words(wds, rank)
+    ranks.concat (pos == []) ? rank_words(wds, rank + 1) : rank_words(wds, rank)
   end
 
   ranks
@@ -181,7 +181,7 @@ def tree_to_key_value_pairs(tree, path)
   pairs = [[path, { letter: tree[:letter] }]]
   tree[:tree].each do |k, v|
     new_path = [path, tree[:letter], k].map(&:to_s).join('/')
-    pairs += tree_to_key_value_pairs(v, new_path)
+    pairs.concat tree_to_key_value_pairs(v, new_path)
   end
   return pairs
 end
@@ -198,7 +198,7 @@ def words_to_key_value_pairs(words, path, alphabet = ('а' .. 'я').to_a)
 
   word_sets.each do |pos, wds|
     new_path = [path, letter, pos].map(&:to_s).join('/')
-    pairs += words_to_key_value_pairs(wds, new_path, alphabet.dup)
+    pairs.concat words_to_key_value_pairs(wds, new_path, alphabet.dup)
   end
 
   return pairs
