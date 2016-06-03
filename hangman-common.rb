@@ -4,7 +4,7 @@ class Hangman
   attr_reader :alphabet, :words
 
   def initialize(alphabet = ('а' .. 'я').to_a, words_file = 'words.txt')
-    @alphabet   = alphabet
+    @alphabet   = alphabet.uniq
     @words_file = words_file
   end
 
@@ -31,6 +31,14 @@ class Hangman
 
   def get_letter_positions(letter, word)
     word.size.times.select{ |i| word[i] == letter }
+  end
+
+  def sort_alphabet
+    @alphabet.sort_by! do |letter|
+      @words.values.map do |ws|
+        ws.count{ |w| w.include?(letter) }
+      end.reduce(&:+)
+    end.reverse!
   end
 
   def solve(word, words = nil)
