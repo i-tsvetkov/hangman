@@ -66,6 +66,7 @@ class Hangman
 
       puts "#{letter}\s=>\s#{pattern}"
 
+      return { guesses:guesses, words:[pattern] } unless pattern.include?('_')
       return { guesses:guesses, words:words } if words.size < 2
     end
   end
@@ -90,6 +91,7 @@ class Hangman
   def find_word_in_tree(word, tree, letters = [])
     return { letters:letters, words: tree[:words] } if tree.key?(:words)
     return { letters:letters, words:[] } unless tree.key?(:tree)
+    return { letters:letters, words:[word] } if (word.chars - letters).empty?
 
     letters.push(tree[:letter])
     pos = get_letter_positions(tree[:letter], word)
@@ -255,6 +257,7 @@ class Hangman
 
       pattern = get_pattern(letter, word, pattern)
       puts "#{letter}\s=>\s#{pattern}"
+      return { guesses:guesses, words:[pattern] } unless pattern.include?('_')
     end
   end
 end
