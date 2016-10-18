@@ -113,9 +113,9 @@ class Hangman
   end
 
   def load_words
-    @words = File.open(@words_file).each_line.map { |w|
-               w.strip.downcase.tr('А-Я', 'а-я')
-             }.uniq.group_by(&:size)
+    @words = File.readlines(@words_file)
+    @words.each(&:strip!)
+    @words.group_by(&:size)
   end
 
   def load_words_tree
