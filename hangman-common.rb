@@ -116,6 +116,7 @@ class Hangman
     @words = File.readlines(@words_file)
     @words.each(&:strip!)
     @words = @words.group_by(&:size)
+    nil
   end
 
   def load_words_tree
@@ -259,6 +260,17 @@ class Hangman
       puts "#{letter}\s=>\s#{pattern}"
       return { guesses:guesses, words:[pattern] } unless pattern.include?('_')
     end
+  end
+
+  def get_all_matching_words(pattern)
+    return pattern unless pattern.include?('_')
+
+    letters = pattern.chars.select{ |c| c != '_' }
+    return @words[pattern.size] if letters.empty?
+
+    char_group = '[^' + letters.join + ']'
+    regex = Regexp.new(pattern.gsub('_', char_group))
+    @words[pattern.size].select{ |w| w.match(regex) }
   end
 end
 
