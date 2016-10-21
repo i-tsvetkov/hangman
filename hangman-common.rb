@@ -18,9 +18,9 @@ class Hangman
   end
 
   def get_most_frequent_letter(alphabet, words)
-    lf = get_letter_frequency(alphabet, words)
-    return nil if lf.empty?
-    lf.max_by{ |l| l[:frequency] }[:letter]
+    alphabet.max_by do |letter|
+      words.count{ |w| w.include? letter }
+    end
   end
 
   def get_pattern(letter, word, old_pattern)
@@ -124,6 +124,7 @@ class Hangman
     @words.each do |len, wds|
       @words[len] = get_words_tree(wds)
     end
+    nil
   end
 
   def get_best_letter(pattern, guesses = [])
