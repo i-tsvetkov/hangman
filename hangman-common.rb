@@ -34,6 +34,12 @@ class Hangman
   end
 
   def sort_alphabet
+    @alphabet.reject! do |letter|
+      @words.values.all? do |ws|
+        ws.none?{ |w| w.include? letter }
+      end
+    end
+
     @alphabet.sort_by! do |letter|
       @words.values.map do |ws|
         ws.count{ |w| w.include?(letter) }
