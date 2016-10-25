@@ -19,7 +19,7 @@ require './hangman-common.rb'
 
 hangman = Hangman.new
 
-# зареждането може да отнеме 5-15 минути
+# зареждането може да отнеме 1-2 минути
 hangman.load_words
 
 hangman.solve('кактус')
@@ -29,7 +29,7 @@ require './hangman-common.rb'
 
 hangman = Hangman.new
 
-# зареждането може да отнеме 15-30 минути и между 2-4 GB RAM памет.
+# зареждането може да отнеме 5-10 минути и между 2-4 GB RAM памет.
 hangman.load_words_tree
 
 hangman.fast_solve('кактус')
